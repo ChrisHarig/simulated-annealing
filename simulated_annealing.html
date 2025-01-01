@@ -82,6 +82,7 @@
 
         <p>Imagine you are lost in a hilly landscape. You know you set up camp with your friends at the top of the highest peak in the area, 
             but everything around you looks the same and you have no recollection of where you came from or which direction your friends are.</p>
+
         <p>This predicament is not unlike the position a computer program may find itself in when trying to find the largest value, or global optimum of a function!</p>
 
         <p> There is a heavy fog and you can only see 5 feet in either direction. 
@@ -97,9 +98,11 @@
 
         <p>Let's take advantage of being a computer program and randomly generate a new location within a range of the current one, and return it under some criteria. 
             This approach, called "random search" (insert inline) is counterintuitive, but it will often outperform hill climbing when given a search space with many local optima. 
+
         <p>The problem with random search is knowing when to stop. In our previous
             example, we knew the global optimum was where are friends are, but in practice the algorithm has no way of knowing what the optimum is. To stop random search, we
-            either set a maximum number of iterations, or set a threshold for a "good enough" solution, where we return any solution greater than it. <p>
+            either set a maximum number of iterations, or set a threshold for a "good enough" solution, where we return any solution greater than it. </p>
+
         <p>However, we don't want to have to generate a ton of points just to take an educated guess at a solution; we need to find a solution efficiently. </p>
         
         <table>
@@ -125,7 +128,7 @@
                 <td>O(2ⁿ)</td>
             </tr>
         </table>
-        <p>Simulated annealing attempts to combine the effeciency of hill climbing and range of random search with probabilistic techniques to find an optimal solution effeciently.</p>
+        <p>Simulated annealing attempts to combine the efficiency of hill climbing and range of random search with probabilistic techniques to find an optimal solution effeciently.</p>
     </section>
 
     <section id="simulated-annealing">
@@ -134,7 +137,7 @@
             But how does this translate to finding a global optimum? </p>
 
         <p>Let's say we start with a random point. We want to find a better point than this, a point above the one we are at, but we don't want to just hill climb to a potential local optimum. Simulated annealing 
-            probabilistically accepts worse solutions purely to avoid local optimum's. The process of deciding when to accept a worse solution is done through 'temperature control'</p>
+            probabilistically accepts worse solutions purely to avoid local optimums. The process of deciding when to accept a worse solution is done through 'temperature control'</p>
 
         <p>After generating a new point, the algorithm decides if it should accept this new solution or stick with the current location based off the current temperature. A higher
             temperature, which is usually bounded between 0 and 1, allows for worse solutions to be accepted more often. The temperature is decreased with each iteration all the way down to 0,
@@ -151,11 +154,10 @@
                 <li>Repeat until temp is zero</li>
             </ol>
         </div>
-        <p></p>
 
-        <div class="code-block"></div>
+        <div class="code-block">
             <pre>
-                def simulated_annealing(initial_state, temp, cooling_rate, min_temp, iterations_per_temp):
+            def simulated_annealing(initial_state, temp, cooling_rate, min_temp, iterations_per_temp):
                 current_state = initial_state
                 current_energy = get_energy(current_state)
                 
@@ -183,7 +185,7 @@
 
     <section id="Cooling Rate and Neighbors">
         <h2>Cooling Rate, Neighbor and Energy Function Selection</h2>
-        <p>Notice anything ambiguos about the above psuedocode? We don't specify what the cooling rate is, or how we select a neighbor of a given point. </p>
+        <p>Notice anything ambiguous about the above psuedocode? We don't specify what the cooling rate is, or how we select a neighbor of a given point. </p>
         <p><strong>Cooling Rate Selection</strong></p>
         <p>The cooling rate (often denoted as α) typically ranges from 0.8 to 0.99, with higher values leading to slower cooling:
         </p>
@@ -207,11 +209,11 @@
                     <br>- Swap two elements
                     <br>- Change one element</li>
                 <li><strong>Combinatorial Problems:</strong> Use problem-specific moves like:
-                    <br>- For The Traveling Salesman Prblem: 2-opt or 3-opt moves
+                    <br>- For The Traveling Salesman Problem: 2-opt or 3-opt moves
                     <br>- For Graph Coloring: Change color of one vertex</li>
             </ul>
         </div>
-        <p>Neighbor selection is a little more tricky that cooling rate. For the continous optimization problem defined in the example above, small perturberations around the 
+        <p>Neighbor selection is a little more tricky that cooling rate. For the continous optimization problem defined in the example above, small perturbations around the 
             current point work best. 
         <p>For discrete problems, swapping the position of two elements in the given search space list, or simply changing the position of an element, are both
             easy changes with minimal calculations.</p>
@@ -329,10 +331,22 @@
     <section id="sources" class="sources">
         <h2>Sources</h2>
         <div class="citation">
-            <p>Chaudhry, Sajid & Hung, Muoi & Hassan, Mohammed. (2018). </p>
-            <p><strong>"A Combined Simulated Annealing and Genetic Algorithm Approach for Subset Selection from Large Set with Unknown Cardinality: A Heuristic Approach"</strong></p>
-            <p>HAL ENAC Archives. Document ID: hal-01887543</p>
-            <p><a href="https://hal-enac.archives-ouvertes.fr/hal-01887543/document">Read the paper</a></p>
+            <p>Kirkpatrick, S., Gelatt, C. D., & Vecchi, M. P. (1983)</p>
+            <p><strong>"Optimization by Simulated Annealing"</strong></p>
+            <p>Science, Vol. 220, No. 4598, pp. 671-680</p>
+            <p>The seminal paper that introduced simulated annealing as an optimization technique.</p>
+        </div>
+        <div class="citation">
+            <p>Henderson, D., Jacobson, S. H., & Johnson, A. W. (2003)</p>
+            <p><strong>"The Theory and Practice of Simulated Annealing"</strong></p>
+            <p>International Series in Operations Research & Management Science, vol 57. Springer, Boston, MA</p>
+            <p>A comprehensive overview of practical implementations and theoretical foundations.</p>
+        </div>
+        <div class="citation">
+            <p>Bertsimas, D., & Tsitsiklis, J. (1993)</p>
+            <p><strong>"Simulated Annealing"</strong></p>
+            <p>Statistical Science, 8(1), 10-15</p>
+            <p>An accessible treatment of the theoretical foundations and convergence properties.</p>
         </div>
     </section>
 </body>
