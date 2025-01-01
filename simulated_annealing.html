@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Understanding Simulated Annealing</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        
+        h1, h2 {
+            color: #2c5282;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+        }
+        
+        .code-block {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .example-container {
+            border: 1px solid #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            background: #f8fafc;
+        }
+        
+        .info-box {
+            background: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        th {
+            background: #f7fafc;
+        }
+
+        .sources {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .citation {
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Understanding Simulated Annealing</h1>
+    <p>Simulated annealing is an algorithm that employs a probabilistic technique to find the global optimum of a function.</p>
+    <p>What's so difficult about that? Let's start by clearly defining the problem SA aims to solve.</p>
+    
+    <section id="introduction">
+        <h2>What is the Problem?</h2>
+
+        <p>Imagine you are lost in a hilly landscape. You know you set up camp with your friends at the top of the highest peak in the area, 
+            but everything around you looks the same and you have no recollection of where you came from or which direction your friends are.</p>
+        <p>This predicament is not unlike the position a computer program may find itself in when trying to find the largest value, or global optimum of a function!</p>
+
+        <p> There is a heavy fog and you can only see 5 feet in either direction. 
+            So you look to your left to see the hill is sloping down. Now you look to your right, the hill is sloping up. 
+            You choose the best you can with the limited information you have and head upward. </p> 
+
+        </p>Our program, which has an initial position, and with limited information (if the left and right points around it are higher or lower than it), 
+            chooses to go up and to the right. It continues this process of moving up and to the right until moving right would move us downward instead of up. 
+            and returns this solution. This would be great if there is only one hill that our friends could be camped on top of, but this is rarely the case.</p>
+
+        <p>The algorithm we just employed is called "hill climbing" (Insert inline link here), 
+            and is great at finding local optimum, but will rarely return a global optimum within a search space with many local optimum.</p>
+
+        <p>Let's take advantage of being a computer program and randomly generate a new location within a range of the current one, and return it under some criteria. 
+            This approach, called "random search" (insert inline) is counterintuitive, but it will often outperform hill climbing when given a search space with many local optima. 
+        <p>The problem with random search is knowing when to stop. In our previous
+            example, we knew the global optimum was where are friends are, but in practice the algorithm has no way of knowing what the optimum is. To stop random search, we
+            either set a maximum number of iterations, or set a threshold for a "good enough" solution, where we return any solution greater than it. <p>
+        <p>However, we don't want to have to generate a ton of points just to take an educated guess at a solution; we need to find a solution efficiently. </p>
+        
+        <table>
+            <tr>
+                <th>Method</th>
+                <th>Advantages</th>
+                <th>Limitations</th>
+                <th>Optimal Solution?</th>
+                <th>Runtime</th>
+            </tr>
+            <tr>
+                <td>Hill Climbing</td>
+                <td>Simple, fast convergence</td>
+                <td>Gets stuck in local optima</td>
+                <td>No</td>
+                <td>O(n)</td>
+            </tr>
+            <tr>
+                <td>Random Search</td>
+                <td>Simple, can theoretically find global optima</td>
+                <td>Extremely inefficient, no learning from previous searches</td>
+                <td>Yes (probabilistic)</td>
+                <td>O(2ⁿ)</td>
+            </tr>
+        </table>
+        <p>Simulated annealing attempts to combine the effeciency of hill climbing and range of random search with probabilistic techniques to find an optimal solution effeciently.</p>
+    </section>
+
+    <section id="simulated-annealing">
+        <h2>How Simulated Annealing Works</h2>
+        <p>Simulated annealing get its name from the physical process of annealing in metallurgy, where metals are heated and slowly cooled to reduce defects and increase crystal size. 
+            But how does this translate to finding a global optimum? </p>
+
+        <p>Let's say we start with a random point. We want to find a better point than this, a point above the one we are at, but we don't want to just hill climb to a potential local optimum. Simulated annealing 
+            probabilistically accepts worse solutions purely to avoid local optimum's. The process of deciding when to accept a worse solution is done through 'temperature control'</p>
+
+        <p>After generating a new point, the algorithm decides if it should accept this new solution or stick with the current location based off the current temperature. A higher
+            temperature, which is usually bounded between 0 and 1, allows for worse solutions to be accepted more often. The temperature is decreased with each iteration all the way down to 0,
+            where the algorithm will accept any newly generated point. </p>
+        
+        <div class="info-box">
+            <p><strong>The Algorithm:</strong></p>
+            <ol>
+                <li>Start with a random solution and high temperature</li>
+                <li>Generate a neighboring solution</li>
+                <li>If new solution is better, accept it</li>
+                <li>If worse, accept a certain percent of the time</li>
+                <li>Decrease temperature</li>
+                <li>Repeat until temp is zero</li>
+            </ol>
+        </div>
+        <p></p>
+
+        <div class="code-block"></div>
+            <pre>
+                def simulated_annealing(initial_state, temp, cooling_rate, min_temp, iterations_per_temp):
+                current_state = initial_state
+                current_energy = get_energy(current_state)
+                
+                while temp > min_temp:
+                    for i in range(iterations_per_temp):
+                        neighbor = get_neighbor(current_state)
+                        new_energy = get_energy(neighbor)
+                        
+                        if accept_probability(current_energy, new_energy, temp) > random():
+                            current_state = neighbor
+                            current_energy = new_energy
+                        
+                    temp *= cooling_rate
+                
+                return current_state
+            
+            def accept_probability(old_energy, new_energy, temp):
+                if new_energy < old_energy:
+                    return 1.0
+                return exp(-(new_energy - old_energy) / temp)
+            </pre>
+        </div>
+
+    </section>
+
+    <section id="Cooling Rate and Neighbors">
+        <h2>Cooling Rate, Neighbor and Energy Function Selection</h2>
+        <p>Notice anything ambiguos about the above psuedocode? We don't specify what the cooling rate is, or how we select a neighbor of a given point. </p>
+        <p><strong>Cooling Rate Selection</strong></p>
+        <p>The cooling rate (often denoted as α) typically ranges from 0.8 to 0.99, with higher values leading to slower cooling:
+        </p>
+        <div class="info-box">
+            <ul>
+                <li>Fast cooling (α ≈ 0.8): Converges quickly but may miss global optimum</li>
+                <li>Slow cooling (α ≈ 0.99): Better exploration but takes longer to converge</li>
+            </ul>
+        </div>
+        <p>So when selecting a cooling rate, one should decide if they want to prioritize speed or accuracy. If a high quality solution is necessary, select a value close to 1. If speed
+            is the priority, you may be better off with a cooling rate closer to .8, or even lower. 
+        </p>
+
+        <p><strong>Neighbor Selection</strong></p>
+        <p>The neighbor function depends on your problem's structure. Here are common approaches:</p>
+        <div class="info-box">
+            <ul>
+                <li><strong>Continuous Problems:</strong> Add small random perturbations to current solution
+                    <br>neighbor = current + random(-δ, δ) where δ decreases with temperature</li>
+                <li><strong>Discrete Problems:</strong> Make small modifications like:
+                    <br>- Swap two elements
+                    <br>- Change one element</li>
+                <li><strong>Combinatorial Problems:</strong> Use problem-specific moves like:
+                    <br>- For The Traveling Salesman Prblem: 2-opt or 3-opt moves
+                    <br>- For Graph Coloring: Change color of one vertex</li>
+            </ul>
+        </div>
+        <p>Neighbor selection is a little more tricky that cooling rate. For the continous optimization problem defined in the example above, small perturberations around the 
+            current point work best. 
+        <p>For discrete problems, swapping the position of two elements in the given search space list, or simply changing the position of an element, are both
+            easy changes with minimal calculations.</p>
+        <p>For combinatorial problems, the key is to maintain the validity of a solution in each neighbor state.</p>
+        </p>
+        <p><strong>Energy Function Selection</strong></p>
+        <p>The energy function (sometimes called the objective or cost function) is crucial as it defines what we're trying to optimize:</p>
+        <div class="info-box">
+            <ul>
+                <li><strong>Properties of a Good Energy Function:</strong>
+                    <br>- Should accurately represent the quality of a solution
+                    <br>- Must be computationally efficient to evaluate
+                    <br>- Should provide meaningful gradients between solutions</li>
+                <li><strong>Common Energy Functions:</strong>
+                    <br>- Distance metrics (for TSP and routing problems)
+                    <br>- Cost functions (for resource allocation)
+                    <br>- Error measures (for machine learning applications)</li>
+                <li><strong>Normalization:</strong>
+                    <br>- Consider normalizing energy values to work well with temperature scale
+                    <br>- Helps in maintaining consistent acceptance probabilities</li>
+            </ul>
+        </div>
+        <p>The energy function directly impacts the acceptance probability calculation, working in conjunction with the temperature to determine whether to accept worse solutions. 
+            A well-designed energy function should create a landscape that the algorithm can effectively explore.</p>
+            <p>For the simplest case of finding a global maximum , the energy function is just the negative of the height at each point. 
+                We use the negative because simulated annealing minimizes energy, so to find a maximum, we minimize the negative of the height. </p>
+        </section>
+
+        <section id="runtime">
+            <h2>Runtime Analysis</h2>
+            <p>The runtime of simulated annealing depends on several factors:</p>
+            
+            <div class="code-block">
+                Time Complexity = O(N × M × F)
+            </div>
+    
+            <p><strong>Variable Descriptions:</strong></p>
+            <ul>
+                <li>N = Number of iterations at each temperature level</li>
+                <li>M = Number of temperature steps until reaching minimum temperature</li>
+                <li>F = Cost of evaluating the objective function for each state</li>
+            </ul>
+    
+            <p><strong>Corresponding Code Elements:</strong></p>
+            <ul>
+                <li>N corresponds to: <code>iterations_per_temp</code> in the main loop</li>
+                <li>M corresponds to: Number of iterations of <code>while temp > min_temp</code></li>
+                <li>F corresponds to: Cost of <code>get_energy()</code> function calls</li>
+            </ul>
+    
+            <p><strong>Runtime Components:</strong></p>
+            <ul>
+                <li>The temperature typically reaches 0 in polynomial time</li>
+                <li>The <code>get_energy()</code> function runs in polynomial time for most optimization problems</li>
+                <li>The <code>iterations_per_temp</code> is usually a constant much smaller than other inputs</li>
+            </ul>
+            
+            <p>So, in practice, the algorithm often finds good solutions in polynomial time, even for NP-hard problems.</p>
+        </section>
+
+        <section id="proof">
+            <h2>Proof of Correctness</h2>
+            <p>The convergence of simulated annealing to the global optimum can be proven using concepts from Markov chains. Here's an intuitive breakdown of why it works:</p>
+            
+            <div class="example-container">
+                <ol>
+                    <li>The algorithm forms a Markov chain
+                        <div class="info-box">
+                            Each state depends only on the previous state and the current temperature, not on the entire history of states. This property allows us to analyze the algorithm's behavior using established Markov chain theory.
+                        </div>
+                    </li>
+                    <li>With proper cooling schedule, it converges to a stationary distribution
+                        <div class="info-box">
+                            If we cool the temperature slowly enough (at least as slow as a logarithmic cooling schedule), the system will reach equilibrium at each temperature. This means the probability of being in any particular state stabilizes, forming what's called a stationary distribution.
+                        </div>
+                    </li>
+                    <li>At T → 0, the stationary distribution concentrates on global optima
+                        <div class="info-box">
+                            As the temperature approaches zero, the probability of accepting worse solutions becomes vanishingly small. The stationary distribution becomes increasingly concentrated around the global optimum, meaning the algorithm is most likely to end up at the best possible solution.
+                        </div>
+                    </li>
+                </ol>
+            </div>
+    
+            <div class="info-box">
+                <p><strong>Key Requirements for Convergence:</strong></p>
+                <ul>
+                    <li>The cooling schedule must be at least as slow as logarithmic cooling (though it can be slower)</li>
+                    <li>The neighbor function must allow any state to be reached from any other state (ergodicity)</li>
+                    <li>The acceptance probability function must satisfy detailed balance conditions</li>
+                </ul>
+            </div>
+    
+            <p><strong>Note on Practical Implementation:</strong> While the theoretical proof guarantees convergence to the global optimum if the algorithm runs indefinitely 
+                in practice we run the algorithm for a finite time. 
+                This means we may not always achieve the theoretical optimum, but the algorithm still frequently finds very good solutions in reasonable time frames. Convergene to the 
+                theoretical optimum is called asymptotic convergence, and is how we prove the solution we find is at least acceptable, but not perfect.</p>
+    
+            <p>For a rigorous mathematical proof involving the detailed balance equations and convergence rates, see the papers by Kirkpatrick et al. (1983) and Henderson et al. (2018) in our sources section.</p>
+        </section>
+
+    <section id="applications">
+        <h2>Real-World Applications</h2>
+        <div class="info-box">
+            <strong>Simulated annealing is used in many practical applications, including:</strong>
+            <ul>
+                <li>VLSI circuit design optimization</li>
+                <li>Airline scheduling</li>
+                <li>Vehicle routing problems</li>
+                <li>Neural network training</li>
+            </ul>
+        </div>
+    </section>
+
+    <section id="sources" class="sources">
+        <h2>Sources</h2>
+        <div class="citation">
+            <p>Chaudhry, Sajid & Hung, Muoi & Hassan, Mohammed. (2018). </p>
+            <p><strong>"A Combined Simulated Annealing and Genetic Algorithm Approach for Subset Selection from Large Set with Unknown Cardinality: A Heuristic Approach"</strong></p>
+            <p>HAL ENAC Archives. Document ID: hal-01887543</p>
+            <p><a href="https://hal-enac.archives-ouvertes.fr/hal-01887543/document">Read the paper</a></p>
+        </div>
+    </section>
+</body>
+</html>
