@@ -157,27 +157,27 @@
 
         <div class="code-block">
             <pre>
-            def simulated_annealing(initial_state, temp, cooling_rate, min_temp, iterations_per_temp):
-                current_state = initial_state
-                current_energy = get_energy(current_state)
+def simulated_annealing(initial_state, temp, cooling_rate, min_temp, iterations_per_temp):
+    current_state = initial_state
+    current_energy = get_energy(current_state)
                 
-                while temp > min_temp:
-                    for i in range(iterations_per_temp):
-                        neighbor = get_neighbor(current_state)
-                        new_energy = get_energy(neighbor)
+    while temp > min_temp:
+        for i in range(iterations_per_temp):
+            neighbor = get_neighbor(current_state)
+            new_energy = get_energy(neighbor)
                         
-                        if accept_probability(current_energy, new_energy, temp) > random():
-                            current_state = neighbor
-                            current_energy = new_energy
+            if accept_probability(current_energy, new_energy, temp) > random():
+                current_state = neighbor
+                current_energy = new_energy
                         
-                    temp *= cooling_rate
+        temp *= cooling_rate
                 
-                return current_state
+    return current_state
             
-            def accept_probability(old_energy, new_energy, temp):
-                if new_energy < old_energy:
-                    return 1.0
-                return exp(-(new_energy - old_energy) / temp)
+def accept_probability(old_energy, new_energy, temp):
+    if new_energy < old_energy:
+        return 1.0
+    return exp(-(new_energy - old_energy) / temp)
             </pre>
         </div>
 
